@@ -1,0 +1,12 @@
+{
+  "name": "cubic-permutations",
+  "version": "1.0.0",
+  "description": "Finds the smallest cube for which N permutations of its digits are also a cube.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha"
+  },
+  "author": "Byron Barnes",
+  "license": "ISC"
+}

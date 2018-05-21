@@ -14,7 +14,7 @@ process.stdin.on('data', function (text) {
   }
   else{
     let howManyCubes = text;
-    let answer = permutor.getSmallestCube(howManyCubes);
+    let answer = permutor.getSmallestNumberWithNCubedPermutations(howManyCubes);
     console.log(answer);
   }
 });

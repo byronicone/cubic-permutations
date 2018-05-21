@@ -1,59 +1,58 @@
-var exports = module.exports = {};
+var permutor = {};
 
-exports.getCubedPermutations = function permute (prefix, str, resultSet){
-  let len = str.length;
-  if(len==0){
-    let permutation = parseInt(prefix);
-    if(prefix.charAt(0)!=0 && Math.cbrt(permutation) % 1 ==0){
-      resultSet.add(permutation);
-    }
-  }
-  for(let i=0; i< len; i++){
-    let newPrefix = prefix+str.charAt(i);
-    let newStr = str.substr(0,i) + str.substr(i+1);
-    permute(newPrefix, newStr, resultSet);
-  }
-}
-
-
-// exports.getPermutations = function permute (prefix, str, resultSet){
-//   let len = str.length;
-//   if(len==0){
-//     if(prefix.charAt(0)!=0){
-//       resultSet.add(prefix);
-//     }
-//   }
-//   for(let i=0; i< len; i++){
-//     let newPrefix = prefix+str.charAt(i);
-//     let newStr = str.substr(0,i) + str.substr(i+1);
-//     permute(newPrefix, newStr, resultSet);
-//   }
-// }
-
-exports.findOtherCubes = (num) => {
-  //test return [56623104,66430125];
-  //1. cube the number
-  let cubed = Math.pow(num, 3);
-  let set = new Set();
-  //2. get all permutations of number
-  module.exports.getCubedPermutations('', cubed.toString(), set);
-
-  //5. return the list of numbers with cubed roots
-  return set;
-}
-
-exports.getSmallestCube = (howMany) => {
-  let looking = true;
-  let number = 2000;
+permutor.getSmallestNumberWithNCubedPermutations = (cubeCount) => {
+  let number = 0;
+  let cubicPerms = [];
   do{
-    console.log(number);
-    let cubes = exports.findOtherCubes(number)
-    if (cubes.size == howMany){
-      console.log(cubes);
-      return Math.pow(number, 3);
-    }
-    number++;
+    let numObj = permutor.getCubeDetails(++number);
+    cubicPerms = permutor.getCubicPermutations(numObj);
   }
-  while(looking);
+  while(cubicPerms.length < cubeCount);
+  return Math.min(...cubicPerms);
 }
 
+permutor.getCubicPermutations = (start) => {
+  let perms = [];
+  for(let i = 1; i<start.value; i++){
+    let prevCube = permutor.getCubeDetails(i);
+
+    let arePerms = permutor.areTheyPermutations(start.cube, prevCube.cube);
+    if(arePerms){
+      perms.push(prevCube.cube);
+    }
+  }
+
+  perms.push(start.cube);
+
+  return perms;
+
+}
+
+permutor.areTheyPermutations = (cube1, cube2) => {
+  if(cube1.length == cube2.length){
+    return permutor.containSameDigits(cube1.toString(),cube2.toString());
+  }
+  return false;
+}
+
+permutor.containSameDigits = (cube1Str, cube2Str) => {
+  let cube1Sorted = cube1Str.split('').sort().join('');
+  let cube2Sorted = cube2Str.split('').sort().join('');
+  return cube1Sorted == cube2Sorted;
+}
+
+permutor.getCubeDetails = (number) => {
+  let cube = permutor.getCube(number);
+  var cubeLength = Math.log(cube) * Math.LOG10E + 1 | 0;
+  return {'value':number, 'cube': cube, 'cubeLength': cubeLength};
+}
+
+permutor.getCube = (root) => {
+  return Math.pow(root,3);
+}
+
+for(prop in permutor) {
+   if(permutor.hasOwnProperty(prop)) {
+     module.exports[prop] = permutor[prop];
+   }
+}
